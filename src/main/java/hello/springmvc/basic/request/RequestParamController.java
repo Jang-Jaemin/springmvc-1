@@ -159,3 +159,9 @@ import java.util.Map;
 
 //  request.getParameter()
 //  여기서는단순히 HttpServletRequest가제공하는방식으로요청파라미터를조회했다.
+
+//  @RequestParam: 파라미터 이름으로 바인딩
+//  @ResponseBody: View 조회를 무시하고, HTTP message body에 직접 해당 내용 입력
+//  @RequestParam의 name(value) 속성이 파라미터 이름으로 사용
+//  @RequestParam("username") String memberName
+//  request.getParameter("username")
