@@ -6,6 +6,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,10 @@ public class RequestBodyStringController {
         String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
         log.info("messageBody={}", messageBody);
         response.getWriter().write("ok");
+
+        //  Postman을사용해서테스트해보자.
+        //  POST http://localhost:8080/request-body-string-v1
+        //  Body -->  row, Text 선택
     }
 
     /**
@@ -39,6 +45,10 @@ public class RequestBodyStringController {
         String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
         log.info("messageBody={}", messageBody);
         responseWriter.write("ok");
+
+        //  스프링 MVC는 다음 파라미터를 지원한다.
+        //  InputStream(Reader): HTTP 요청메시지바디의내용을직접조회
+        //  OutputStream(Writer): HTTP 응답메시지의바디에직접결과출력
     }
 
     /** HttpEntity - requestBodyStringV3
@@ -55,6 +65,32 @@ public class RequestBodyStringController {
         String messageBody = httpEntity.getBody();
         log.info("messageBody={}", messageBody);
         return new HttpEntity<>("ok");
+    }
+
+    /** @RequestBody - requestBodyStringV4
+     * @RequestBody
+     * - 메시지 바디 정보를 직접 조회(@RequestParam X, @ModelAttribute X)
+     * - HttpMessageConverter 사용 -> StringHttpMessageConverter 적용
+     *
+     * @ResponseBody
+     * - 메시지 바디 정보 직접 반환(view 조회X)
+     * - HttpMessageConverter 사용 -> StringHttpMessageConverter 적용
+     */
+    @ResponseBody
+    @PostMapping("/request-body-string-v4")
+    public String requestBodyStringV4(@RequestBody String messageBody) {
+        log.info("messageBody={}", messageBody);
+        return "ok";
+
+        //  @RequestBody
+        //  @RequestBody를 사용하면 HTTP 메시지바디정보를편리하게조회할수있다.
+        //  참고로 헤더 정보가 필요하다면 HttpEntity를 사용하거나 @RequestHeader를 사용하면된다.
+        //  이렇게 메시지바디를 직접조회하는 기능은 요청파라미터를 조회하는@RequestParam , @ModelAttribute와는 전혀 관계가 없다.
+        //  요청파라미터 vs HTTP 메시지바디
+        //  요청파라미터를 조회하는 기능: @RequestParam , @ModelAttribute HTTP 메시지바디를 직접 조회하는 기능: @RequestBody
+        //  @ResponseBody
+        //  @ResponseBody를 사용하면 응답결과를 HTTP 메시지바디에 직접 담아서 전달할 수 있다. 물론 이 경우에도 view를 사용하지 않는다.
+
     }
 }
 //  HTTP 요청메시지 - 단순텍스트
